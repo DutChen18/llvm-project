@@ -150,6 +150,9 @@ protected:
   /// Use .set instead of = to equate a symbol to an expression.
   bool UsesSetToEquateSymbol = false;
 
+  /// Used if UsesSetToEquateSymbol is true.
+  const char *SetDirective = "\t.set\t";
+
   // Print the EH begin symbol with an assignment. Defaults to false.
   bool UseAssignmentForEHBegin = false;
 
@@ -263,6 +266,15 @@ protected:
   bool NeedsDwarfSectionOffsetDirective = false;
 
   //===--- Alignment Information ----------------------------------------===//
+
+  /// Directives used for alignment
+  const char *Align8bitsDirective = "\t.p2align\t";
+  const char *Align16bitsDirective = "\t.p2alignw\t";
+  const char *Align32bitsDirective = "\t.p2alignl\t";
+  const char *Align64bitsDirective = nullptr;
+
+  /// True if alignment directives support fill values
+  bool SupportsAlignmentFillValue = true;
 
   /// If this is true (the default) then the asmprinter emits ".align N"
   /// directives, where N is the number of bytes to align to.  Otherwise, it
@@ -557,6 +569,7 @@ public:
   const char *getLabelSuffix() const { return LabelSuffix; }
 
   bool usesSetToEquateSymbol() const { return UsesSetToEquateSymbol; }
+  const char *getSetDirective() const { return SetDirective; }
   bool useAssignmentForEHBegin() const { return UseAssignmentForEHBegin; }
   bool needsLocalForSize() const { return NeedsLocalForSize; }
   StringRef getInternalSymbolPrefix() const { return InternalSymbolPrefix; }
@@ -607,6 +620,11 @@ public:
   AsmCharLiteralSyntax characterLiteralSyntax() const {
     return CharacterLiteralSyntax;
   }
+  const char *getAlign8bitsDirective() const { return Align8bitsDirective; }
+  const char *getAlign16bitsDirective() const { return Align16bitsDirective; }
+  const char *getAlign32bitsDirective() const { return Align32bitsDirective; }
+  const char *getAlign64bitsDirective() const { return Align64bitsDirective; }
+  bool supportsAlignmentFillValue() const { return SupportsAlignmentFillValue; }
   bool getAlignmentIsInBytes() const { return AlignmentIsInBytes; }
   unsigned getTextAlignFillValue() const { return TextAlignFillValue; }
   const char *getGlobalDirective() const { return GlobalDirective; }

@@ -53,6 +53,7 @@
 #include "ToolChains/WebAssembly.h"
 #include "ToolChains/XCore.h"
 #include "ToolChains/ZOS.h"
+#include "ToolChains/DC.h"
 #include "clang/Basic/DiagnosticDriver.h"
 #include "clang/Basic/TargetID.h"
 #include "clang/Basic/Version.h"
@@ -7306,6 +7307,12 @@ const ToolChain &Driver::getToolChain(const ArgList &Args,
       case llvm::Triple::amdgpu:
       case llvm::Triple::r600:
         TC = std::make_unique<toolchains::AMDGPUToolChain>(*this, Target, Args);
+        break;
+      case llvm::Triple::dc32le:
+      case llvm::Triple::dc64le:
+      case llvm::Triple::dc32be:
+      case llvm::Triple::dc64be:
+        TC = std::make_unique<toolchains::DCToolChain>(*this, Target, Args);
         break;
       default:
         if (toolchains::BareMetal::handlesTarget(Target))

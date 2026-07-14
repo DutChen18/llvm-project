@@ -3407,6 +3407,16 @@ def WasmSystemLibrary
            __stack_chk_fail, __stack_chk_guard)>;
 
 //===----------------------------------------------------------------------===//
+// DC Runtime Libcalls
+//===----------------------------------------------------------------------===//
+
+def isDC : RuntimeLibcallPredicate<"TT.isDC()">;
+def isDC64 : RuntimeLibcallPredicate<"TT.isDC64()">;
+
+def DCSystemLibrary
+    : SystemRuntimeLibrary<isDC, DefaultRuntimeLibcallImpls>;
+
+//===----------------------------------------------------------------------===//
 // Legacy Default Runtime Libcalls
 //===----------------------------------------------------------------------===//
 

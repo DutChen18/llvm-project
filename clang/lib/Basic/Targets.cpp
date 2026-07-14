@@ -40,6 +40,7 @@
 #include "Targets/X86.h"
 #include "Targets/XCore.h"
 #include "Targets/Xtensa.h"
+#include "Targets/DC.h"
 #include "clang/Basic/Diagnostic.h"
 #include "clang/Basic/DiagnosticFrontend.h"
 #include "llvm/ADT/StringExtras.h"
@@ -829,6 +830,14 @@ std::unique_ptr<TargetInfo> AllocateTarget(const llvm::Triple &Triple,
 
   case llvm::Triple::xtensa:
     return std::make_unique<XtensaTargetInfo>(Triple, Opts);
+
+  case llvm::Triple::dc32le:
+  case llvm::Triple::dc32be:
+    return std::make_unique<DC32TargetInfo>(Triple, Opts);
+
+  case llvm::Triple::dc64le:
+  case llvm::Triple::dc64be:
+    return std::make_unique<DC64TargetInfo>(Triple, Opts);
   }
 }
 } // namespace targets

@@ -997,6 +997,13 @@ set(ve_SOURCES
 
 set(m68k_SOURCES ${GENERIC_SOURCES})
 
+set(dc_SOURCES ${GENERIC_SOURCES} dc/mulsi3.c)
+list(REMOVE_ITEM dc_SOURCES gcc_personality_v0.c)
+set(dc32le_SOURCES ${dc_SOURCES})
+set(dc64le_SOURCES ${dc_SOURCES})
+set(dc32be_SOURCES ${dc_SOURCES})
+set(dc64be_SOURCES ${dc_SOURCES})
+
 add_custom_target(builtins)
 set_target_properties(builtins PROPERTIES FOLDER "Compiler-RT/Metatargets")
 

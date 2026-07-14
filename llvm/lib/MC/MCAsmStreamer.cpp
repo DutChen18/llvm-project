@@ -825,7 +825,7 @@ void MCAsmStreamer::emitDarwinTargetVariantBuildVersion(
 void MCAsmStreamer::emitAssignment(MCSymbol *Symbol, const MCExpr *Value) {
   bool UseSet = MAI->usesSetToEquateSymbol();
   if (UseSet)
-    OS << ".set ";
+    OS << MAI->getSetDirective();
   Symbol->print(OS, MAI);
   OS << (UseSet ? ", " : " = ");
   MAI->printExpr(OS, *Value);
@@ -1610,25 +1610,31 @@ void MCAsmStreamer::emitAlignmentDirective(uint64_t ByteAlignment,
   // Some assemblers don't support non-power of two alignments, so we always
   // emit alignments as a power of two if possible.
   if (isPowerOf2_64(ByteAlignment)) {
+    const char *AlignDirective;
+
     switch (ValueSize) {
     default:
       llvm_unreachable("Invalid size for machine code value!");
     case 1:
-      OS << "\t.p2align\t";
+      AlignDirective = MAI->getAlign8bitsDirective();
       break;
     case 2:
-      OS << ".p2alignw ";
+      AlignDirective = MAI->getAlign16bitsDirective();
       break;
     case 4:
-      OS << ".p2alignl ";
+      AlignDirective = MAI->getAlign32bitsDirective();
       break;
     case 8:
-      llvm_unreachable("Unsupported alignment size!");
+      AlignDirective = MAI->getAlign64bitsDirective();
+      break;
     }
 
-    OS << Log2_64(ByteAlignment);
+    assert(AlignDirective && "Unsupported alignment size!");
 
-    if (Value.has_value() || MaxBytesToEmit) {
+    OS << AlignDirective << Log2_64(ByteAlignment);
+
+    if (MAI->supportsAlignmentFillValue() &&
+        (Value.has_value() || MaxBytesToEmit)) {
       if (Value.has_value()) {
         OS << ", 0x";
         OS.write_hex(truncateToSize(*Value, ValueSize));

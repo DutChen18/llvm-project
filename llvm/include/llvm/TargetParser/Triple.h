@@ -114,7 +114,11 @@ public:
     renderscript32, // 32-bit RenderScript
     renderscript64, // 64-bit RenderScript
     ve,             // NEC SX-Aurora Vector Engine
-    LastArchType = ve
+    dc32le,
+    dc64le,
+    dc32be,
+    dc64be,
+    LastArchType = dc64be
   };
   enum SubArchType {
     NoSubArch,
@@ -1234,6 +1238,19 @@ public:
   bool isBPF() const {
     return getArch() == Triple::bpfel || getArch() == Triple::bpfeb;
   }
+
+  /// Tests whether the target is 32-bit DC.
+  bool isDC32() const {
+    return getArch() == Triple::dc32le || getArch() == Triple::dc32be;
+  }
+
+  /// Tests whether the target is 64-bit DC.
+  bool isDC64() const {
+    return getArch() == Triple::dc64le || getArch() == Triple::dc64be;
+  }
+
+  /// Tests whether the target is DC (32- and 64-bit).
+  bool isDC() const { return isDC32() || isDC64(); }
 
   /// Tests whether MSVC linker or UEFI targets.
   /// Used to default to -mincremental-linker-compatible if we are

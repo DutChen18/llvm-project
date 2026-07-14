@@ -164,6 +164,14 @@ StringRef Triple::getArchTypeName(ArchType Kind) {
     return "xcore";
   case xtensa:
     return "xtensa";
+  case dc32le:
+    return "dc32le";
+  case dc64le:
+    return "dc64le";
+  case dc32be:
+    return "dc32be";
+  case dc64be:
+    return "dc64be";
   }
 
   llvm_unreachable("Invalid ArchType!");
@@ -415,6 +423,12 @@ StringRef Triple::getArchTypePrefix(ArchType Kind) {
 
   case xtensa:
     return "xtensa";
+
+  case dc32le:
+  case dc64le:
+  case dc32be:
+  case dc64be:
+    return "dc";
   }
 }
 
@@ -567,6 +581,10 @@ Triple::ArchType Triple::getArchTypeForLLVMName(StringRef Name) {
       .Case("loongarch64", loongarch64)
       .Case("dxil", dxil)
       .Case("xtensa", xtensa)
+      .Case("dc32le", dc32le)
+      .Case("dc64le", dc64le)
+      .Case("dc32be", dc32be)
+      .Case("dc64be", dc64be)
       .Default(UnknownArch);
 }
 
@@ -721,6 +739,10 @@ Triple::ArchType Triple::parseArch(StringRef ArchName) {
                   "dxilv1.9"},
                  Triple::dxil)
           .Case("xtensa", Triple::xtensa)
+          .Case("dc32le", Triple::dc32le)
+          .Case("dc64le", Triple::dc64le)
+          .Case("dc32be", Triple::dc32be)
+          .Case("dc64be", Triple::dc64be)
           .Default(Triple::UnknownArch);
 
   // Some architectures require special parsing logic just to compute the
@@ -1046,6 +1068,10 @@ static Triple::ObjectFormatType getDefaultFormat(const Triple &T) {
   case Triple::ve:
   case Triple::xcore:
   case Triple::xtensa:
+  case Triple::dc32le:
+  case Triple::dc64le:
+  case Triple::dc32be:
+  case Triple::dc64be:
     return Triple::ELF;
 
   case Triple::mipsel:
@@ -1812,6 +1838,8 @@ unsigned Triple::getArchPointerBitWidth(llvm::Triple::ArchType Arch) {
   case llvm::Triple::x86:
   case llvm::Triple::xcore:
   case llvm::Triple::xtensa:
+  case llvm::Triple::dc32le:
+  case llvm::Triple::dc32be:
     return 32;
 
   case llvm::Triple::aarch64:
@@ -1839,6 +1867,8 @@ unsigned Triple::getArchPointerBitWidth(llvm::Triple::ArchType Arch) {
   case llvm::Triple::ve:
   case llvm::Triple::wasm64:
   case llvm::Triple::x86_64:
+  case llvm::Triple::dc64le:
+  case llvm::Triple::dc64be:
     return 64;
   }
   llvm_unreachable("Invalid architecture value");
@@ -1923,6 +1953,8 @@ Triple Triple::get32BitArchVariant() const {
   case Triple::x86:
   case Triple::xcore:
   case Triple::xtensa:
+  case Triple::dc32le:
+  case Triple::dc32be:
     // Already 32-bit.
     break;
 
@@ -1984,6 +2016,12 @@ Triple Triple::get32BitArchVariant() const {
   case Triple::x86_64:
     T.setArch(Triple::x86);
     break;
+  case Triple::dc64le:
+    T.setArch(Triple::dc32le);
+    break;
+  case Triple::dc64be:
+    T.setArch(Triple::dc32be);
+    break;
   }
   return T;
 }
@@ -2034,6 +2072,8 @@ Triple Triple::get64BitArchVariant() const {
   case Triple::ve:
   case Triple::wasm64:
   case Triple::x86_64:
+  case Triple::dc64le:
+  case Triple::dc64be:
     // Already 64-bit.
     break;
 
@@ -2103,6 +2143,12 @@ Triple Triple::get64BitArchVariant() const {
     break;
   case Triple::x86:
     T.setArch(Triple::x86_64);
+    break;
+  case Triple::dc32le:
+    T.setArch(Triple::dc64le);
+    break;
+  case Triple::dc32be:
+    T.setArch(Triple::dc64be);
     break;
   }
   return T;
@@ -2185,6 +2231,12 @@ Triple Triple::getBigEndianArchVariant() const {
   case Triple::tcele:
     T.setArch(Triple::tce);
     break;
+  case Triple::dc32le:
+    T.setArch(Triple::dc32be);
+    break;
+  case Triple::dc64le:
+    T.setArch(Triple::dc64be);
+    break;
   default:
     llvm_unreachable("getBigEndianArchVariant: unknown triple.");
   }
@@ -2240,6 +2292,12 @@ Triple Triple::getLittleEndianArchVariant() const {
   case Triple::tce:
     T.setArch(Triple::tcele);
     break;
+  case Triple::dc32be:
+    T.setArch(Triple::dc32le);
+    break;
+  case Triple::dc64be:
+    T.setArch(Triple::dc64le);
+    break;
   default:
     llvm_unreachable("getLittleEndianArchVariant: unknown triple.");
   }
@@ -2293,6 +2351,8 @@ bool Triple::isLittleEndian() const {
   case Triple::x86_64:
   case Triple::xcore:
   case Triple::xtensa:
+  case Triple::dc32le:
+  case Triple::dc64le:
     return true;
   default:
     return false;
